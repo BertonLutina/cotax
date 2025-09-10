@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import TabelOne from "../../components/tabel/tabelone";
 import { supabase } from "../../supabaseClient";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { getStorage } from "../../utilities/cssfunction";
 
 const Declarations = () => {
   const [declarations, setdeclarations] = useState([]);
@@ -10,15 +11,7 @@ const Declarations = () => {
   const fetchDeclarations = async () => {
     try {
       // ✅ Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        console.error(userError);
-        return;
-      }
+      const user = getStorage("user","json");
 
       // ✅ Fetch profile data
       const { data, error } = await supabase
@@ -26,7 +19,6 @@ const Declarations = () => {
         .select(`*,transactions(*)`)
         .order("created_at", { ascending: false });
 
-        console.log('data', data)
 
       setdeclarations(data);
       if (error) {
@@ -76,6 +68,8 @@ const Declarations = () => {
           </div>
         </div>
       )}
+
+      
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { setUser } from "../../redux/userSlice";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import { getStorage } from "../../utilities/cssfunction";
 
 // ✅ Validation Schema
 const schema = yup.object().shape({
@@ -90,15 +91,8 @@ export default function ProfileModal({ open, onClose }) {
   const fetchProfile = async () => {
     try {
       // ✅ Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-  
-      if (userError || !user) {
-        console.error(userError);
-        return;
-      }
+      const user = getStorage("user","json");
+      const access_token = getStorage("access_token","string");
   
       setuser(user);
   
@@ -106,7 +100,7 @@ export default function ProfileModal({ open, onClose }) {
       const { data, error } = await supabase
         .from("profile") // or "profile" depending on which table
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", user?.user_id||user.id)
         .order("created_at", { ascending: false })
         .single(); // get one record
   
@@ -132,6 +126,7 @@ export default function ProfileModal({ open, onClose }) {
   }, []);
 
   const onSubmit = async (data) => {
+    
     try {
       // Safely cast numbers (empty string → null)
       data.numero = data.numero ? Number(data.numero) : null;
@@ -140,27 +135,20 @@ export default function ProfileModal({ open, onClose }) {
         : null;
   
       // ✅ Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      const user = getStorage("user","json");
+      const access_token = getStorage("access_token","string");
   
-      if (userError || !user) {
-        console.error("Auth error:", userError);
-        alert("Utilisateur non connecté.");
-        return;
-      }
   
       const profileData = {
         ...data,
-        user_id: user.id,
+        user_id: (user?.user_id||user.id),
       };
   
       // ✅ Check if profile already exists
       const { data: existing, error: fetchError } = await supabase
         .from("profile")
         .select("id")
-        .eq("user_id", user.id)
+        .eq("user_id", user?.user_id || user?.id)
         .maybeSingle(); // better than single() → avoids throwing if no row
   
       if (fetchError) throw fetchError;
@@ -171,7 +159,7 @@ export default function ProfileModal({ open, onClose }) {
         ({ error } = await supabase
           .from("profile")
           .update(profileData)
-          .eq("user_id", user.id));
+          .eq("user_id", user?.user_id || user?.id));
         console.log("Profile updated:", profileData);
       } else {
         // ✅ Insert
@@ -491,7 +479,7 @@ export default function ProfileModal({ open, onClose }) {
                 Annuler
               </button>
               <button
-                type="button"
+                type="submit"
                 className="px-4 py-2 rounded bg-blue-400 text-white"
               >
                 Sauvegarder

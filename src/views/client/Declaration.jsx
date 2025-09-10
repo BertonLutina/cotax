@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { payments } from "../../utilities/fakedata";
 import PaymentCards from "../../components/cards/payementscards";
 import { supabase } from "../../supabaseClient";
-import { classNames, formatCDF, formatUSD } from "../../utilities/cssfunction";
+import { classNames, formatCDF, formatUSD, getStorage } from "../../utilities/cssfunction";
 
 // ✅ Validation schema
 const schema = yup.object().shape({
@@ -170,21 +170,12 @@ export const Declaration = () => {
     const fetchProfile = async () => {
       try {
         // ✅ Get logged-in user
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
-    
-        if (userError || !user) {
-          console.error(userError);
-          return;
-        }
-    
+        const user = getStorage("user","json");
         // ✅ Fetch profile data
         const { data, error } = await supabase
           .from("profile") // or "profile" depending on which table
           .select("*")
-          .eq("user_id", user.id)
+          .eq("user_id", user?.user_id || user?.id)
           .order("created_at", { ascending: false })
           .single(); // get one record
     

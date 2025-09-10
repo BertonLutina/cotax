@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { supabase } from "../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { setStorage } from "../../utilities/cssfunction";
+import { setUser } from "../../redux/userSlice";
+import { AuthContext } from "../../context/AuthContext";
 
 // ✅ Validation schema
 const schema = yup.object().shape({
@@ -25,12 +29,7 @@ const schema = yup.object().shape({
     .required("Confirmation requise"),
 });
 
-export default function Registration({
-  setIsAuthenticated,
-  setClient,
-  setIsRegistration,
-  setshowLoader
-}) {
+export default function Registration() {
   const {
     register,
     handleSubmit,
@@ -41,21 +40,43 @@ export default function Registration({
 
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isGov, setIsGov] = useState(true);
+
+  const { login } = useContext(AuthContext); // Get the login function from AuthContext
 
   const onSubmit = async (data) => {
     setErrorMsg("");
-    setshowLoader(true);
+ 
 
     const email = data.companynumber; // pseudo-email
 
-    const { data: signUpData, error } = await supabase.auth.signUp({
+    const { data: { user, session }, error } = await supabase.auth.signUp({
       email,
       password: data.password,
       options: {
-        data: { clientType: 2, companynumber: data.companynumber },
+        data: { companynumber: data.companynumber },
       },
     });
+
+
+    if (isGov) {
+      setStorage("client", 1);
+    } else {
+      setStorage("client", 2);
+    }
+
+    const clientType = user?.user_metadata;
+
+    if (user) {
+        const userPorfiler = {
+          "nomSociete":clientType?.companynumber,
+          "is_societe": isGov
+        }
+        dispatch(setUser(userPorfiler));
+    }
+
+
 
     if (error) {
       setErrorMsg(error.message);
@@ -63,21 +84,17 @@ export default function Registration({
     }
 
     // Registration successful, auto-login optional
-    setIsAuthenticated(true);
-    if (isGov) {
-      setClient(1);
-    } else {
-      setClient(2);
-    }
-    setshowLoader(false)
     Swal.fire({
       icon: "success",
-      title: "Connexion réussie 🎉",
-      text: "Bienvenue dans votre espace !",
+      title: "Connexion réussie",
+      text: `Bienvenue dans votre espace ${clientType?.companynumber}!`,
       timer: 2000,
       showConfirmButton: false,
     });
-    navigate("/"); // redirect
+    const route = isGov ? "/" : "/dashboard";
+
+    navigate(route); // redirect after login
+
   };
 
   return (
@@ -196,7 +213,7 @@ export default function Registration({
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => setIsRegistration(false)}
+                onClick={()=>navigate("/signin")}
                 className="text-blue-900 hover:text-indigo-500 font-medium"
               >
                 Déjà un compte ? Connectez-vous

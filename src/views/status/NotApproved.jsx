@@ -10,15 +10,7 @@ const NotApproved = () => {
   const fetchDeclarations = async () => {
     try {
       // ✅ Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        console.error(userError);
-        return;
-      }
+      const user = getStorage("user","json");
 
       const client = getStorage("client","number");
       // ✅ Fetch profile data
@@ -39,7 +31,7 @@ const NotApproved = () => {
         const { data, error } = await supabase
         .from("declarations")
         .select(`*,transactions(*)`)
-        .eq("user_id", user.id)
+        .eq("user_id", user?.user_id || user?.id)
         .eq("isapproved", 1)
         .order("created_at", { ascending: false });
 

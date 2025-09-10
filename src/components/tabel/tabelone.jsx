@@ -1,8 +1,20 @@
 import moment from "moment";
 import { people, status_approv } from "../../utilities/fakedata";
+import { useEffect, useState } from "react";
+import { classNames } from "../../utilities/cssfunction";
+import DeclarationDetail from "../../views/client/DeclarationDetail";
 
   
   export default function TabelOne({declarations , title ="Les déclarations ayant été approuvées par le DGRK et la Banque"}) {
+    const [openModal, setopenModal] = useState(false)
+    const [detail, setdetail] = useState({});
+
+    useEffect(() => {
+      if(Object.keys(detail).length > 0)
+      setopenModal(true)
+    }, [detail])
+    
+
     return (
       <div className="px-4 sm:px-6 lg:px-8 w-11/12 bg-white border rounded shadow-sm ">
         <div className="sm:flex sm:items-center mt-8">
@@ -26,10 +38,12 @@ import { people, status_approv } from "../../utilities/fakedata";
                       Titre
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                     Status du Payment
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Status Approvement
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Status du Payment
                     </th>
                   </tr>
                 </thead>
@@ -55,6 +69,15 @@ import { people, status_approv } from "../../utilities/fakedata";
                         <div className="mt-1 text-gray-500">{person?.transactions[0].type_payment}</div>
                       </td>
                       <td className="px-3 py-5 text-sm whitespace-nowrap text-gray-500">{status_approv[person?.isapproved]}</td>
+                      <td>
+                      <button type='button'   className={classNames(
+                                  'bg-blue-600 text-white',
+                                  'rounded-md p-2 py-1 text-sm font-medium ring-1 ring-inset',
+                                )}
+                            onClick={() => setdetail(person)}>
+                                Detail
+                            </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -62,6 +85,7 @@ import { people, status_approv } from "../../utilities/fakedata";
             </div>
           </div>
         </div>
+        <DeclarationDetail open={openModal} closeModal={setopenModal} detail={detail}/>
       </div>
     )
   }

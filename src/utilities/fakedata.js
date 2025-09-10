@@ -37,9 +37,9 @@ export const navigation = (client) => (client == 1) ? [
     { name: "Déclaration de l'IRL", href: '/declaration', icon: BuildingOffice2Icon, current: false },
   ]
   export const teams = (client) => [
-    { id: 1, name: 'Approved', href: '/approved', initial: 'A', current: false, textcolor: 'text-green-700', color:'bg-green-100' },
-    { id: 2, name: 'Application in Process', href: '/pending', initial: 'P', current: false,textcolor: 'text-green-700', color:'bg-green-100' },
-    { id: 3, name: 'Not Approved', href: '/notapproved', initial: 'NA', current: false,textcolor: 'text-red-700', color:'bg-red-100' },
+    { id: 1, name: 'Approuvée', href: '/approved', initial: 'A', current: false, textcolor: 'text-green-700', color:'bg-green-100' },
+    { id: 2, name: "En Cours d’Approvement", href: '/pending', initial: 'ECA', current: false,textcolor: 'text-green-700', color:'bg-green-100' },
+    { id: 3, name: 'Non Approuvée', href: '/notapproved', initial: 'NA', current: false,textcolor: 'text-red-700', color:'bg-red-100' },
   ] 
 
 
@@ -343,6 +343,6 @@ export const navigation = (client) => (client == 1) ? [
 
   export const status_approv = {
     0 : "En Attente" ,
-    1 : "Approuvee",
-    2 : "Non Approuvee",
+    1 : "Approuvée",
+    2 : "Non Approuvée",
   }

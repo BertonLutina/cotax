@@ -36,7 +36,7 @@ export function classNames(...classes) {
 }
 
 export function setStorage(cle, val) {
-  localStorage.setItem(cle, val);
+  localStorage.setItem(cle, JSON.stringify(val));
 }
 
 export function getStorage(key, datatype = "string") {
@@ -106,6 +106,7 @@ export const groupTransactionsByDay = (data) => {
     }
 
     acc[dateKey].transactions.push({
+      ...item,
       id: item.id,
       invoiceNumber: item.invoice_number,
       href: item.href || "#",
@@ -114,6 +115,7 @@ export const groupTransactionsByDay = (data) => {
       status: item.status,
       client: item.client,
       description: item.description,
+      declaration_id:item.declaration_id,
       icon: getIconStatus(item.status) || null, // you can map status -> icon here
     });
 

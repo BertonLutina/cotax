@@ -1,31 +1,28 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { days, statuses } from '../../../../utilities/fakedata'
-import { classNames, groupTransactionsByDay } from '../../../../utilities/cssfunction'
+import { classNames, getStorage, groupTransactionsByDay } from '../../../../utilities/cssfunction'
 import { supabase } from '../../../../supabaseClient'
+import DeclarationDetail from '../../../client/DeclarationDetail'
+import PayeCard from '../../../../components/cards/payecard'
 
 const StatActivities = () => {
   const [jours, setJours] = useState([])
+  const [openModal, setopenModal] = useState(false);
+  const [detail, setdetail] = useState({});
 
   const fetchTransactions = async () => {
     try {
       // ✅ Get logged-in user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        console.error(userError);
-        return;
-      }
-
+      const user = getStorage("user","json");
       // ✅ Fetch profile data
       const { data, error } = await supabase
         .from("transactions")
         .select(`*`)
         .order("created_at", { ascending: false });
+
+
         const dayz = groupTransactionsByDay(data);
-        console.log('trans ==> ', dayz)
+        
 
         setJours(dayz);
       if (error) {
@@ -41,13 +38,21 @@ const StatActivities = () => {
     }
   };
 
+
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
+  useEffect(() => {
+
+    if(Object.keys(detail).length > 0)
+    setopenModal(true)
+  }, [detail])
+  
+
 
   return (
-    <div className='my-16 border rounded-lg'>
+    <div className='my-4 border rounded-lg'>
     <div className="mx-auto max-w-7xl mt-6 px-4 sm:px-6 lg:px-8">
       <h2 className="mx-auto max-w-2xl text-base font-semibold text-gray-900 lg:mx-0 lg:max-w-none">
         Les Transactions
@@ -65,7 +70,7 @@ const StatActivities = () => {
               </tr>
             </thead>
             <tbody>
-              {jours?.length > 0 && jours?.map((day) => (
+              {jours?.length > 0 ? jours?.map((day) => (
                 <Fragment key={day.dateTime}>
                   <tr className="text-sm/6 text-gray-900">
                     <th scope="colgroup" colSpan={3} className="relative isolate py-2 font-semibold">
@@ -122,15 +127,28 @@ const StatActivities = () => {
                           Invoice <span className="text-gray-900">#{transaction.invoiceNumber}</span>
                         </div>
                       </td>
+
+                      <td className="py-5 text-right">
+                        <div className="flex justify-end">
+                            <button type='button'   className={classNames(
+                                  'bg-blue-600 text-white',
+                                  'rounded-md p-2 py-1 text-sm font-medium ring-1 ring-inset',
+                                )}
+                            onClick={() => setdetail(transaction)}>
+                                Detail
+                            </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </Fragment>
-              ))}
+              )):<tr><td className='text-lg font-medium text-gray-900'>Aucune donnée retrouvée</td></tr>}
             </tbody>
           </table>
         </div>
       </div>
     </div>
+ <PayeCard open={openModal} closeModal={setopenModal} detail={detail}/>
   </div>
   )
 }

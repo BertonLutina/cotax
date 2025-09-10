@@ -7,7 +7,7 @@ import { setUser, updateUserField } from "../../redux/userSlice";
 import { AuthContext } from "../../context/AuthContext";
 import { setStorage } from "../../utilities/cssfunction";
 
-export default function Signin({}) {
+export default function Signin() {
   const [companynumber, setCompanynumber] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -47,17 +47,13 @@ export default function Signin({}) {
       .single();
 
     if (errorProfile) {
-      console.error(errorProfile);
-      return;
+      //console.error(errorProfile);
     }
 
-    console.log("profileData ==>", profileData);
-
-    login(session.access_token);
+    login(session?.access_token);
 
     if (error) {
       setErrorMsg(error.message);
-      return;
     }
 
     // Determine client type from user metadata
@@ -72,15 +68,21 @@ export default function Signin({}) {
     if (user) {
       if (profileData) {
         dispatch(setUser(profileData));
+        console.log("user", profileData);
+        setStorage("user", profileData);
+        setStorage("access_token", session?.access_token);
       } else {
         const userPorfiler = {
-          "nomSociete":clientType?.companynumber,
-          "is_societe": isGov
-        }
+          nomSociete: clientType?.companynumber,
+          is_societe: isGov,
+        };
+        console.log("user", userPorfiler);
+        setStorage("user", userPorfiler);
+        setStorage("access_token", session?.access_token);
         dispatch(setUser(userPorfiler));
       }
     }
-    
+
     Swal.fire({
       icon: "success",
       title: "Connexion réussie",
@@ -89,7 +91,7 @@ export default function Signin({}) {
       showConfirmButton: false,
     });
     const route = isGov ? "/" : "/declaration";
-    
+
     navigate(route); // redirect after login
   };
 
@@ -184,6 +186,7 @@ export default function Signin({}) {
             <div className="text-center">
               <button
                 type="button"
+                onClick={() => navigate("/registration")}
                 className="text-blue-900  hover:text-indigo-500 font-medium"
               >
                 Pas encore de compte ? Inscrivez-vous

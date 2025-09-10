@@ -30,6 +30,7 @@ import Approved from "./views/status/Approved";
 import NotApproved from "./views/status/NotApproved";
 import Pending from "./views/status/Pending";
 import Declarations from "./views/client/Declarations";
+import ProtectedRoute from "./context/ProtectedRoute";
 
 function RoutesApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -51,7 +52,7 @@ function RoutesApp() {
         <Routes>
           <Route path="/signin" element={<Signin />} />
           <Route path="/registration" element={<Registration />} />
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="/civil" element={<Civil />} />
             <Route path="/entreprise" element={<Entreprises />} />
