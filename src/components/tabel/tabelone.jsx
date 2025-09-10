@@ -1,5 +1,5 @@
 import moment from "moment";
-import { people, status_approv } from "../../utilities/fakedata";
+import {  status_approv } from "../../utilities/fakedata";
 import { useEffect, useState } from "react";
 import { classNames } from "../../utilities/cssfunction";
 import DeclarationDetail from "../../views/client/DeclarationDetail";

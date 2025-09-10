@@ -1,21 +1,8 @@
 import moment from "moment";
 import "moment/locale/fr"; // 👈 important for French locale
 import {
-
   ArrowDownCircleIcon,
-  ArrowPathIcon,
   ArrowUpCircleIcon,
-  BanknotesIcon,
-  BuildingLibraryIcon,
-  BuildingOffice2Icon,
-  ChartPieIcon,
-  ClockIcon,
-  CreditCardIcon,
-  DocumentIcon,
-  FolderIcon,
-  HomeIcon,
-  HomeModernIcon,
-  UsersIcon,
 } from '@heroicons/react/24/outline';
 
 export const getIconStatus = (status) => {

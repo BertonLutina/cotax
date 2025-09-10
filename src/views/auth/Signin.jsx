@@ -1,11 +1,12 @@
-import { useContext, useLayoutEffect, useState } from "react";
+import { useContext,useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { setUser, updateUserField } from "../../redux/userSlice";
+import { setUser } from "../../redux/userSlice";
 import { AuthContext } from "../../context/AuthContext";
 import { setStorage } from "../../utilities/cssfunction";
+import FlagLoader from "../../components/spinners/flagloader";
 
 export default function Signin() {
   const [companynumber, setCompanynumber] = useState("");
@@ -15,11 +16,13 @@ export default function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [showLoader, setshowLoader] = useState(false);
   const { login } = useContext(AuthContext); // Get the login function from AuthContext
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+    setshowLoader(true);
 
     // Transform companynumber to pseudo-email for Supabase
     const email = companynumber;
@@ -82,7 +85,7 @@ export default function Signin() {
         dispatch(setUser(userPorfiler));
       }
     }
-
+    setshowLoader(false);
     Swal.fire({
       icon: "success",
       title: "Connexion réussie",
@@ -90,10 +93,18 @@ export default function Signin() {
       timer: 2000,
       showConfirmButton: false,
     });
+
     const route = isGov ? "/" : "/declaration";
 
     navigate(route); // redirect after login
   };
+
+  if (showLoader)
+    return (
+      <div className="bg-red-500 h-screen w-full">
+        <FlagLoader showLoader={showLoader} />
+      </div>
+    );
 
   return (
     <div className="flex min-h-full w-full h-screen bg-neutral-100 flex-col justify-center py-12 sm:px-6 lg:px-8">

@@ -31,7 +31,7 @@ const schema = yup.object().shape({
 });
 
 // ✅ Upload helper
-const uploadImage = async (bucket, file) => {
+/* const uploadImage = async (bucket, file) => {
   if (!file) return null;
 
   const fileName = `${Date.now()}-${file.name}`;
@@ -46,7 +46,7 @@ const uploadImage = async (bucket, file) => {
 
   const { data } = supabase.storage.from(bucket).getPublicUrl(fileName);
   return data.publicUrl;
-};
+}; */
 
 export default function ProfileModal({ open, onClose }) {
     const {
@@ -88,42 +88,40 @@ export default function ProfileModal({ open, onClose }) {
   const [user, setuser] = useState({})
 
 
-  const fetchProfile = async () => {
-    try {
-      // ✅ Get logged-in user
-      const user = getStorage("user","json");
-      const access_token = getStorage("access_token","string");
-  
-      setuser(user);
-  
-      // ✅ Fetch profile data
-      const { data, error } = await supabase
-        .from("profile") // or "profile" depending on which table
-        .select("*")
-        .eq("user_id", user?.user_id||user.id)
-        .order("created_at", { ascending: false })
-        .single(); // get one record
-  
-      if (error) {
-        console.error(error);
-        return;
-      }
-  
-      if (data) {
-        // ✅ Reset the form with fetched data
-        reset({
-          ...data,
-          is_societe: data.is_societe ?? true, // default true if null
-        });
-      }
-    } catch (err) {
-      console.error("Fetch profile error:", err);
-    }
-  };
-
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = getStorage("user","json");
+        const access_token = getStorage("access_token","string");
+  
+        setuser(user);
+  
+        const { data, error } = await supabase
+          .from("profile")
+          .select("*")
+          .eq("user_id", user?.user_id || user.id)
+          .order("created_at", { ascending: false })
+          .single();
+  
+        if (error) {
+          console.error(error);
+          return;
+        }
+  
+        if (data) {
+          reset({
+            ...data,
+            is_societe: data.is_societe ?? true,
+          });
+        }
+      } catch (err) {
+        console.error("Fetch profile error:", err);
+      }
+    };
+  
     fetchProfile();
-  }, []);
+  }, [reset]);
+  
 
   const onSubmit = async (data) => {
     

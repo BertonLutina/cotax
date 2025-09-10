@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { setStorage } from "../../utilities/cssfunction";
 import { setUser } from "../../redux/userSlice";
-import { AuthContext } from "../../context/AuthContext";
+import FlagLoader from "../../components/spinners/flagloader";
 
 // ✅ Validation schema
 const schema = yup.object().shape({
@@ -42,23 +42,24 @@ export default function Registration() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isGov, setIsGov] = useState(true);
-
-  const { login } = useContext(AuthContext); // Get the login function from AuthContext
+  const [showLoader, setshowLoader] = useState(false);
 
   const onSubmit = async (data) => {
     setErrorMsg("");
- 
+    setshowLoader(true);
 
     const email = data.companynumber; // pseudo-email
 
-    const { data: { user, session }, error } = await supabase.auth.signUp({
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.signUp({
       email,
       password: data.password,
       options: {
         data: { companynumber: data.companynumber },
       },
     });
-
 
     if (isGov) {
       setStorage("client", 1);
@@ -69,20 +70,18 @@ export default function Registration() {
     const clientType = user?.user_metadata;
 
     if (user) {
-        const userPorfiler = {
-          "nomSociete":clientType?.companynumber,
-          "is_societe": isGov
-        }
-        dispatch(setUser(userPorfiler));
+      const userPorfiler = {
+        nomSociete: clientType?.companynumber,
+        is_societe: isGov,
+      };
+      dispatch(setUser(userPorfiler));
     }
-
-
 
     if (error) {
       setErrorMsg(error.message);
       return;
     }
-
+    setshowLoader(false);
     // Registration successful, auto-login optional
     Swal.fire({
       icon: "success",
@@ -94,8 +93,14 @@ export default function Registration() {
     const route = isGov ? "/" : "/dashboard";
 
     navigate(route); // redirect after login
-
   };
+
+  if (showLoader)
+    return (
+      <div className="bg-red-500 h-screen w-full">
+        <FlagLoader showLoader={showLoader} />
+      </div>
+    );
 
   return (
     <div className="flex min-h-full w-full h-screen bg-neutral-100 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -213,7 +218,7 @@ export default function Registration() {
             <div className="text-center">
               <button
                 type="button"
-                onClick={()=>navigate("/signin")}
+                onClick={() => navigate("/signin")}
                 className="text-blue-900 hover:text-indigo-500 font-medium"
               >
                 Déjà un compte ? Connectez-vous

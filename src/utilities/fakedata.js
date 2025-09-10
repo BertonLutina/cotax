@@ -3,17 +3,11 @@ import {
   ArrowDownCircleIcon,
   ArrowPathIcon,
   ArrowUpCircleIcon,
-  BanknotesIcon,
-  BuildingLibraryIcon,
   BuildingOffice2Icon,
-  ChartPieIcon,
   ClockIcon,
-  CreditCardIcon,
   DocumentIcon,
-  FolderIcon,
   HomeIcon,
   HomeModernIcon,
-  UsersIcon,
 } from '@heroicons/react/24/outline'
 import moment from 'moment'
 
@@ -23,7 +17,7 @@ const payer = 427870.00
 const impaye = 245988.00
 
 
-export const navigation = (client) => (client == 1) ? [
+export const navigation = (client) => (client === 1) ? [
     { name: 'Tableau de bord', href: '/', icon: HomeIcon, current: true },
     { name: "Les déclarations de l'IRL", href: '/declarations', icon: DocumentIcon, current: false},
    //{ name: 'Locations', href: '/locations', icon: BuildingOffice2Icon, current: false },
@@ -273,68 +267,12 @@ export const navigation = (client) => (client == 1) ? [
  export const payments = [
     { name: "Visa", icon: <FaCcVisa className="text-blue-600 w-10 h-10" /> },
     { name: "Mastercard", icon: <FaCcMastercard className="text-red-600 w-10 h-10" /> },
-    { name: "M-Pesa", icon: <img src={require('../assets/bank/mpesa.png')} className="w-20 h-10" /> },
-    { name: "Orange Money", icon: <img src={require('../assets/bank/orange-money-logo-png.png')} className="w-10 h-10" /> },
+    { name: "M-Pesa", icon: <img alt='logo M-Pesa' src={require('../assets/bank/mpesa.png')} className="w-20 h-10" /> },
+    { name: "Orange Money", icon: <img alt='logo orange money' src={require('../assets/bank/orange-money-logo-png.png')} className="w-10 h-10" /> },
     { name: "Cheque", icon: <FaCreditCard className="text-gray-700 w-10 h-10" /> },
     { name: "Espèce", icon: <FaMoneyBillWave className="text-green-500 w-10 h-10" /> },
   ];
 
-  export const people = [
-    {
-      name: 'Lindsay Walton',
-      title: 'Front-end Developer',
-      department: 'Optimization',
-      email: 'lindsay.walton@example.com',
-      role: 'Member',
-      image:
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      name: 'Courtney Henry',
-      title: 'Designer',
-      department: 'Intranet',
-      email: 'courtney.henry@example.com',
-      role: 'Admin',
-      image:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      name: 'Tom Cook',
-      title: 'Director of Product',
-      department: 'Directives',
-      email: 'tom.cook@example.com',
-      role: 'Member',
-      image:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      name: 'Whitney Francis',
-      title: 'Copywriter',
-      department: 'Program',
-      email: 'whitney.francis@example.com',
-      role: 'Admin',
-      image:
-        'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      name: 'Leonard Krasner',
-      title: 'Senior Designer',
-      department: 'Mobility',
-      email: 'leonard.krasner@example.com',
-      role: 'Owner',
-      image:
-        'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      name: 'Floyd Miles',
-      title: 'Principal Designer',
-      department: 'Security',
-      email: 'floyd.miles@example.com',
-      role: 'Member',
-      image:
-        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ]
 
   export const status_payement = {
     1 : "Payee",
