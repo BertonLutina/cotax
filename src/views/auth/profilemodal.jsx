@@ -49,65 +49,63 @@ const schema = yup.object().shape({
 }; */
 
 export default function ProfileModal({ open, onClose }) {
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        reset,      // <-- add reset
-        formState: { errors },
-      } = useForm({
-        resolver: yupResolver(schema),
-        defaultValues: {
-          is_societe: true,
-          nom: "",
-          prenom: "",
-          nom_societe: "",
-          numero_societe: "",
-          rue: "",
-          numero: "",
-          boite: "",
-          nom_societe_bailleur: "",
-          numero_societe_bailleur: "",
-          rue_bailleur: "",
-          numero_bailleur: "",
-          boite_bailleur: "",
-          commune: "",
-          codepostal: "",
-          commune_bailleur: "",
-          codepostal_bailleur: "",
-        },
-      });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset, // <-- add reset
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      is_societe: true,
+      nom: "",
+      prenom: "",
+      nom_societe: "",
+      numero_societe: "",
+      rue: "",
+      numero: "",
+      boite: "",
+      nom_societe_bailleur: "",
+      numero_societe_bailleur: "",
+      rue_bailleur: "",
+      numero_bailleur: "",
+      boite_bailleur: "",
+      commune: "",
+      codepostal: "",
+      commune_bailleur: "",
+      codepostal_bailleur: "",
+    },
+  });
 
   const [logoPreview, setLogoPreview] = useState(null);
-  const [logoBailleurPreview, setLogoBailleurPreview] = useState(null);
-
   const [is_societe, setis_societe] = useState(true);
 
   const dispatch = useDispatch();
 
-  const [user, setuser] = useState({})
-
+  /*   const [user, setuser] = useState({})
+   */
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const user = getStorage("user","json");
-        const access_token = getStorage("access_token","string");
-  
-        setuser(user);
-  
+        const user = getStorage("user", "json");
+        /* const access_token = getStorage("access_token", "string"); */
+
+        /*  setuser(user); */
+
         const { data, error } = await supabase
           .from("profile")
           .select("*")
           .eq("user_id", user?.user_id || user.id)
           .order("created_at", { ascending: false })
           .single();
-  
+
         if (error) {
           console.error(error);
           return;
         }
-  
+
         if (data) {
           reset({
             ...data,
@@ -118,39 +116,36 @@ export default function ProfileModal({ open, onClose }) {
         console.error("Fetch profile error:", err);
       }
     };
-  
+
     fetchProfile();
   }, [reset]);
-  
 
   const onSubmit = async (data) => {
-    
     try {
       // Safely cast numbers (empty string → null)
       data.numero = data.numero ? Number(data.numero) : null;
       data.numero_bailleur = data.numero_bailleur
         ? Number(data.numero_bailleur)
         : null;
-  
+
       // ✅ Get logged-in user
-      const user = getStorage("user","json");
-      const access_token = getStorage("access_token","string");
-  
-  
+      const user = getStorage("user", "json");
+      /*      const access_token = getStorage("access_token", "string"); */
+
       const profileData = {
         ...data,
-        user_id: (user?.user_id||user.id),
+        user_id: user?.user_id || user.id,
       };
-  
+
       // ✅ Check if profile already exists
       const { data: existing, error: fetchError } = await supabase
         .from("profile")
         .select("id")
         .eq("user_id", user?.user_id || user?.id)
         .maybeSingle(); // better than single() → avoids throwing if no row
-  
+
       if (fetchError) throw fetchError;
-  
+
       let error;
       if (existing) {
         // ✅ Update
@@ -164,27 +159,25 @@ export default function ProfileModal({ open, onClose }) {
         ({ error } = await supabase.from("profile").insert([profileData]));
         console.log("Profile inserted:", profileData);
       }
-  
+
       if (error) throw error;
-  
+
       // ✅ Update Redux state
       dispatch(setUser(profileData));
-  
+
       Swal.fire({
         icon: "success",
         title: "Profil enregistré ✅",
         timer: 2000,
         showConfirmButton: false,
       });
-  
+
       onClose(false); // close modal
     } catch (err) {
       console.error("Save error:", err);
       alert("Erreur lors de l’enregistrement");
     }
   };
-  
-  
 
   const inputClass =
     "mt-2 block w-full h-14 text-lg rounded-md border border-gray-300 text-gray-900 px-4 py-3  focus:outline-indigo-600 sm:px-3 sm:py-1.5 ";
@@ -195,7 +188,6 @@ export default function ProfileModal({ open, onClose }) {
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-xl overflow-y-auto max-h-[90vh]">
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Société ou particulier */}
             <h2 className="text-lg font-semibold text-gray-900">
@@ -240,7 +232,7 @@ export default function ProfileModal({ open, onClose }) {
               <input
                 type="file"
                 accept="image/*"
-               // {...register("logo")}
+                // {...register("logo")}
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) setLogoPreview(URL.createObjectURL(file));

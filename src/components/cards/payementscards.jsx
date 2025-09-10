@@ -64,7 +64,6 @@ function PaymentCards({
     handleSubmit,
     reset: resetForm,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(paymentSchema),
@@ -79,7 +78,7 @@ function PaymentCards({
 
   useEffect(() => {
     setValue("selectItemName", selectItem?.name || "");
-  }, [selectItem]);
+  }, [selectItem,setValue]);
 
   const closeModal = () => {
     setOpenModal(false);
@@ -121,7 +120,9 @@ function PaymentCards({
         href: `dashboard/detail/COTAX${count}`,
         amount: amount?.amount,
         currency: "USD",
-        status: "Paid",
+        status: ["M-Pesa", "Orange Money", "Visa", "Mastercard"].includes(
+          selectItem?.name
+        ) ? "Payée"  : "Non Payée",
         client: declaration?.nomSociete,
         description: declaration?.description,
         created_at: new Date().toISOString(),

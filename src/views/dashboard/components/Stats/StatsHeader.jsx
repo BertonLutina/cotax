@@ -4,7 +4,7 @@ import { classNames } from "../../../../utilities/cssfunction";
 
 const StatsHeader = () => {
   return (
-    <dl className="mx-auto grid border rounded-lg px-1 grid-cols-1 gap-px bg-neutral-100 sm:grid-cols-2 lg:grid-cols-4 mb-4">
+    <dl className="mx-auto grid border rounded-lg grid-cols-1 gap-px bg-neutral-100 sm:grid-cols-2 lg:grid-cols-4 mb-4">
       {stats.map((stat) => (
         <div
           key={stat.name}
